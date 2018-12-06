@@ -17,16 +17,26 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_LIST = "com.example.calculator.HISTORY";
-    ArrayList<String> equationHistory = new ArrayList<String>();
+
+    ArrayList<String> equationHistory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        equationHistory = new ArrayList<>();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        saveHistoryToDatabase();
+    }
+
+    protected void saveHistoryToDatabase()
+    {
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -44,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        loadHistoryFromDatabaseAndClearIt();
+    }
+
+    protected void loadHistoryFromDatabaseAndClearIt()
+    {
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -84,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         db.delete(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME,null,null);
+        db.close();
 }
     public void buttonEquals(View view)
     {
