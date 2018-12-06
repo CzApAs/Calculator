@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
             // Insert the new row, returning the primary key value of the new row
             long newRowId = db.insert(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME, null, values);
         }
-
         db.close();
+        equationHistory.clear();
     }
 
     @Override
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     protected void loadHistoryFromDatabaseAndClearIt()
     {
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String[] projection = {
                 BaseColumns._ID,
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             equationHistory.add(cursor.getString(cursor.getColumnIndexOrThrow(HistoryDatabaseContract.HistoryDatabase.COLUMN_NAME_STRING)));
         }
         cursor.close();
-        db.delete(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME, null, null);
+        db.delete(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME,null,null);
         db.close();
     }
 
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     {
         equationHistory.clear();
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME,null,null);
         db.close();
 }

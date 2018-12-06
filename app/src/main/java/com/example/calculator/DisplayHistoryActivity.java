@@ -34,5 +34,5 @@ public class DisplayHistoryActivity extends AppCompatActivity {
     {
         equationHistory = (ArrayList<String>) getIntent().getSerializableExtra(MainActivity.EXTRA_LIST);
     }
-    
+
 }
