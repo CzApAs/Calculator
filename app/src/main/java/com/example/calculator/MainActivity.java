@@ -38,15 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void saveHistoryToDatabase()
     {
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        for(String storedString : equationHistory) {
-            values.put(HistoryDatabaseContract.HistoryDatabase.COLUMN_NAME_STRING, storedString);
-            // Insert the new row, returning the primary key value of the new row
-            long newRowId = db.insert(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME, null, values);
-        }
-        db.close();
+        mDbHelper.insertList(equationHistory);
         equationHistory.clear();
     }
 
@@ -60,29 +52,8 @@ public class MainActivity extends AppCompatActivity {
     protected void loadHistoryFromDatabaseAndClearIt()
     {
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        String[] projection = {
-                BaseColumns._ID,
-                HistoryDatabaseContract.HistoryDatabase.COLUMN_NAME_STRING,
-        };
-
-        Cursor cursor = db.query(
-                HistoryDatabaseContract.HistoryDatabase.TABLE_NAME,   // The table to query
-                projection,             // The array of columns to return (pass null to get all)
-                null,              // The columns for the WHERE clause
-                null,          // The values for the WHERE clause
-                null,                   // don't group the rows
-                null,                   // don't filter by row groups
-                null               // The sort order
-        );
-
-        while(cursor.moveToNext()) {
-            equationHistory.add(cursor.getString(cursor.getColumnIndexOrThrow(HistoryDatabaseContract.HistoryDatabase.COLUMN_NAME_STRING)));
-        }
-        cursor.close();
-        db.delete(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME,null,null);
-        db.close();
+        equationHistory = mDbHelper.getList();
+        mDbHelper.clearDatabase();
     }
 
 
@@ -97,10 +68,9 @@ public class MainActivity extends AppCompatActivity {
     {
         equationHistory.clear();
         HistoryDbHelper mDbHelper = new HistoryDbHelper(this);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.delete(HistoryDatabaseContract.HistoryDatabase.TABLE_NAME,null,null);
-        db.close();
-}
+        mDbHelper.clearDatabase();
+    }
+
     public void buttonEquals(View view)
     {
         TextView textView = (TextView) findViewById(R.id.textView);
